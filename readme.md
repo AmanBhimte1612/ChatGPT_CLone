@@ -5,4 +5,10 @@ To run make sure to install all requirements run this command:
 
 pip install -r requirements.txt
 
+change the OpenApi with your own API
+
+run main.py
+
+
+
 
