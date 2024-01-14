@@ -1,7 +1,7 @@
 from flask import Flask, render_template,request,jsonify
 import openai
 import sqlite3
-openai.api_key = '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'
+openai.api_key = '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'
 MODEL= "gpt-3.5-turbo"
 
 def create_table():
@@ -64,31 +64,35 @@ def home():
 
 def qa():
     if request.method=="POST":
-        
         question=request.json.get("question")
-        try:
-            que=question
-            print(que)
-            response = openai.ChatCompletion.create(
-                model=MODEL,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content":que},
-                ],
-                temperature=0,
-            )
-            print(response['choices'][0]['message']['content'])
-            Answer=response['choices'][0]['message']['content']
-            
-            insert_into_database(question,Answer)
-            
-            data={"result":f"Answer of {Answer}"}
+        chats=fetchQuestion()
+        if question in chats:
+            Answer=fetch_from_database(question)
+            print("Answer")
+            data={"result":Answer}
             return jsonify(data)
-        
-        
-        except SomeExceptionType as e:
-            data="Sorry please try again"
-            return None
+        else:
+            try:
+                que=question
+                print(que)
+                response = openai.ChatCompletion.create(
+                    model=MODEL,
+                    messages=[
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content":que},
+                    ],
+                    temperature=0,
+                )
+                print(response['choices'][0]['message']['content'])
+                Answer=response['choices'][0]['message']['content']
+                print(que)
+                insert_into_database(question,Answer)
+                
+                data={"result":f"Answer of {Answer}"}
+                return jsonify(data)
+            except:
+                data="Sorry please try again"
+                return jsonify(data)
     data = {"result": "Thank you! I'm just a machine learning model designed to respond to questions and generate text based on my training data. Is there anything specific you'd like to ask or discuss? "}
     return jsonify(data)
     # return render_template("index.html")
