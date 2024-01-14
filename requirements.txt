@@ -1,0 +1,6 @@
+flask
+Flask
+jsonify
+db-sqlite3
+openai
+
